@@ -3,10 +3,15 @@ const mongoose = require('mongoose');
 const CryptoData = require('./models/CryptoData');
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 9001;
+
+// Load environment variables
+require('dotenv').config();
 
 // Connect to MongoDB
-mongoose.connect('mongodb://localhost:27017/crypto', { useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+    .then(() => console.log('Connected to MongoDB'))
+    .catch(err => console.error('Could not connect to MongoDB:', err));
 
 // API to get latest data
 app.get('/stats', async (req, res) => {
