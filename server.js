@@ -23,6 +23,21 @@ app.get('/stats', async (req, res) => {
     }
 });
 
+// API to get standard deviation
+app.get('/deviation', async (req, res) => {
+    const { coin } = req.query;
+    const data = await CryptoData.find({ coin }).sort({ timestamp: -1 }).limit(100);
+    if (data.length > 0) {
+        const prices = data.map(d => d.price);
+        const mean = prices.reduce((a, b) => a + b, 0) / prices.length;
+        const variance = prices.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / prices.length;
+        const deviation = Math.sqrt(variance);
+        res.json({ deviation });
+    } else {
+        res.status(404).send('Not enough data');
+    }
+});
+
 
 const cron = require('node-cron');
 const fetchAndStoreCryptoData = require('./services/fetchCryptoData');
