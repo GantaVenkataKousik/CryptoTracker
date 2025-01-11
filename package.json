@@ -1,0 +1,12 @@
+{
+  "name": "koinx",
+  "version": "1.0.0",
+  "description": "CryptoTracker is a Node.js application that tracks the current price, market cap, and 24-hour change of three cryptocurrencies: Bitcoin, Matic, and Ethereum. It stores this data in a MongoDB database and provides API endpoints to retrieve the latest data and calculate the standard deviation of prices.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
