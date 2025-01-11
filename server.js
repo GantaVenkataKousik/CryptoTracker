@@ -1,5 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const cron = require('node-cron');
 const dotenv = require('dotenv');
 const CryptoData = require('./models/CryptoData');
 
@@ -87,7 +88,6 @@ app.get('/', (req, res) => {
     `);
 });
 
-const cron = require('node-cron');
 const fetchAndStoreCryptoData = require('./services/fetchCryptoData');
 
 // Schedule the job to run every 2 hours
