@@ -17,15 +17,28 @@ mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTop
 // API to get latest data
 app.get('/stats', async (req, res) => {
     const { coin } = req.query;
-    const latestData = await CryptoData.findOne({ coin }).sort({ timestamp: -1 });
-    if (latestData) {
+
+    if (!coin) {
+        return res.status(400).json({ error: 'Coin query parameter is required' });
+    }
+
+    try {
+        const latestData = await CryptoData.findOne({ coin }).sort({ timestamp: -1 });
+
+        if (!latestData) {
+            return res.status(404).json({ error: 'No data found for the specified coin' });
+        }
+
         res.json({
+            coin: latestData.coin,
             price: latestData.price,
             marketCap: latestData.marketCap,
-            '24hChange': latestData.change24h
+            change24h: latestData.change24h,
+            timestamp: latestData.timestamp
         });
-    } else {
-        res.status(404).send('Data not found');
+    } catch (error) {
+        console.error('Error fetching stats:', error);
+        res.status(500).json({ error: 'Internal server error' });
     }
 });
 
@@ -44,6 +57,35 @@ app.get('/deviation', async (req, res) => {
     }
 });
 
+// Root route to display welcome message
+app.get('/', (req, res) => {
+    res.send(`
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Crypto Tracker</title>
+            <style>
+                body {
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    height: 100vh;
+                    margin: 0;
+                    font-family: Arial, sans-serif;
+                }
+                h1 {
+                    font-weight: bold;
+                }
+            </style>
+        </head>
+        <body>
+            <h1>Welcome to Crypto Tracker</h1>
+        </body>
+        </html>
+    `);
+});
 
 const cron = require('node-cron');
 const fetchAndStoreCryptoData = require('./services/fetchCryptoData');
